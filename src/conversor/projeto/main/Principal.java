@@ -1,9 +1,14 @@
 package conversor.projeto.main;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 import conversor.projeto.exception.MenorQueZeroException;
+import conversor.projeto.model.Historico;
+import conversor.projeto.persistence.ArquivoHistorico;
 import conversor.projeto.service.ConversorMoeda;
 
 public class Principal {
@@ -13,21 +18,15 @@ public class Principal {
 	
 	private static void menu() throws IOException, InterruptedException, MenorQueZeroException {
 		ConversorMoeda conversor = new ConversorMoeda();
+		ArquivoHistorico arquivoHistorico = new ArquivoHistorico();
 		int opc = 0;
 		double valor = 0;
-		System.out.println("CONVERSOR DE MOEDA\n");
-		System.out.println("1 - PESO ARGENTINO -> REAL BRASILEIRO");
-		System.out.println("2 - REAL BRASILEIRO -> PESO ARGENTINO");
-		System.out.println("3 - DÓLAR -> PESO ARGENTINO");
-		System.out.println("4 - PESO ARGENTINO -> DÓLAR");
-		System.out.println("5 - REAL BRASILEIRO -> DÓLAR");
-		System.out.println("6 - DÓLAR -> REAL BRASILEIRO\n");
-		System.out.print("Escolha uma opção: ");
+		opcoesMenu();
 		Scanner s = new Scanner(System.in);
 		opc = s.nextInt();
 		while(opc < 1 || opc > 6) {
 			System.out.println("Opção inválida. Selecione uma opção entre 1 e 6");
-			System.out.print("Escolha uma opção: ");
+			opcoesMenu();
 			opc = s.nextInt();
 		}
 		
@@ -37,7 +36,10 @@ public class Principal {
 			valor = s.nextDouble();
 			s.close();
 			try {
-				System.out.println(valor  + " ARS = " + conversor.Conversor(valor, "ARS", "BRL") + " BRL");
+				double valorConvertido = conversor.Conversor(valor, "ARS", "BRL");
+				System.out.println(valor  + " ARS = " + valorConvertido + " BRL");
+				Historico historico = new Historico("ARS", "BRL", valor, valorConvertido / valor, LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yy")), LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+				arquivoHistorico.gravaDados(historico);
 			} catch (MenorQueZeroException e) {
 				System.out.println(e.getMessage());
 			}
@@ -98,5 +100,16 @@ public class Principal {
 			}
 			break;
 		}
+	}
+	
+	private static void opcoesMenu() {
+		System.out.println("CONVERSOR DE MOEDA\n");
+		System.out.println("1 - PESO ARGENTINO -> REAL BRASILEIRO");
+		System.out.println("2 - REAL BRASILEIRO -> PESO ARGENTINO");
+		System.out.println("3 - DÓLAR -> PESO ARGENTINO");
+		System.out.println("4 - PESO ARGENTINO -> DÓLAR");
+		System.out.println("5 - REAL BRASILEIRO -> DÓLAR");
+		System.out.println("6 - DÓLAR -> REAL BRASILEIRO\n");
+		System.out.print("Escolha uma opção: ");
 	}
 }
