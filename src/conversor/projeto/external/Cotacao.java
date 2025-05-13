@@ -9,16 +9,38 @@ import java.net.http.HttpResponse.BodyHandlers;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class Cotacao implements ExchangeRateApi {
-	@Override
-	public double consultaCotacao(String moedaBase, String moedaAlvo) throws IOException, InterruptedException {
+public class Cotacao {
+	String moedaBase;
+	String moedaAlvo;
+	String cotacao;
+
+	public void setMoedaBase(String moedaBase) {
+		this.moedaBase = moedaBase;
+	}
+	
+	public void setMoedaAlvo(String moedaAlvo) {
+		this.moedaAlvo = moedaAlvo;
+	}
+	
+	public String getMoedaBase() {
+		return moedaBase;
+	}
+	
+	public String getMoedaAlvo() {
+		return moedaAlvo;
+	}
+	
+	public void setCotacao() throws IOException, InterruptedException {
 		String url = "https://v6.exchangerate-api.com/v6/565dc70372fb03c9b123ee89/latest/" + moedaBase;
 		HttpClient client = HttpClient.newHttpClient();
 		HttpRequest req = HttpRequest.newBuilder().uri(URI.create(url)).build();
 		HttpResponse<String> resp = client.send(req, BodyHandlers.ofString());
 		
 		JsonObject obj = JsonParser.parseString(resp.body()).getAsJsonObject().getAsJsonObject("conversion_rates");
-		double valor = obj.get(moedaAlvo).getAsDouble();
-		return valor;
+		cotacao = obj.get(moedaAlvo).getAsString();
+	}
+	
+	public String getCotacao() {
+		return cotacao;
 	}
 }

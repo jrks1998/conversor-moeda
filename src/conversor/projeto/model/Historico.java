@@ -1,8 +1,14 @@
 package conversor.projeto.model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-public record Historico(String moedaBase, String moedaAlvo, double valor, double cotacao, String data, String hora) {
-
+public record Historico(String moedaBase, String moedaAlvo, double valor, String cotacao, double valorConvertido, String data, String hora) {
+	@Override
+	public String toString() {
+		return "MOEDA BASE: " + moedaBase + "\n" +
+			   "MOEDA ALVO: " + moedaAlvo + "\n" +
+			   "VALOR: " + valor + "\n" +
+			   "COTAÇÃO: " + cotacao + "\n" +
+			   "VALOR CONVERTIDO: " + valorConvertido + "\n" +
+			   "DATA: " + data + "\n" +
+			   "HORA: " + hora + "\n";
+	}
 }
